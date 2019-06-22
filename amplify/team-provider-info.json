@@ -1,0 +1,14 @@
+{
+    "master": {
+        "awscloudformation": {
+            "AuthRoleName": "notes-app-master-20190622102614-authRole",
+            "UnauthRoleArn": "arn:aws:iam::748263420028:role/notes-app-master-20190622102614-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::748263420028:role/notes-app-master-20190622102614-authRole",
+            "Region": "us-west-2",
+            "DeploymentBucketName": "notes-app-master-20190622102614-deployment",
+            "UnauthRoleName": "notes-app-master-20190622102614-unauthRole",
+            "StackName": "notes-app-master-20190622102614",
+            "StackId": "arn:aws:cloudformation:us-west-2:748263420028:stack/notes-app-master-20190622102614/d6344310-9512-11e9-a9d3-0657eb5c1e84"
+        }
+    }
+}
