@@ -15,5 +15,22 @@
                 "notesappf8eb6779": {}
             }
         }
+    },
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "notes-app-dev-20190623212230-authRole",
+            "UnauthRoleArn": "arn:aws:iam::748263420028:role/notes-app-dev-20190623212230-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::748263420028:role/notes-app-dev-20190623212230-authRole",
+            "Region": "us-west-2",
+            "DeploymentBucketName": "notes-app-dev-20190623212230-deployment",
+            "UnauthRoleName": "notes-app-dev-20190623212230-unauthRole",
+            "StackName": "notes-app-dev-20190623212230",
+            "StackId": "arn:aws:cloudformation:us-west-2:748263420028:stack/notes-app-dev-20190623212230/aef6d350-9637-11e9-9074-0299cad2cdb6"
+        },
+        "categories": {
+            "auth": {
+                "notesappf8eb6779": {}
+            }
+        }
     }
 }

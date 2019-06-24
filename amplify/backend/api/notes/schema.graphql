@@ -3,3 +3,7 @@ type Note @model @auth(rules: [{allow: owner}]) {
   title: String!
   content: String
 }
+
+type Subscription {
+  onNoteUpdated(id: ID!): Note @aws_subscribe(mutations: ["updateNote"])
+}

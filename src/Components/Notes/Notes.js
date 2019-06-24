@@ -9,6 +9,10 @@ import * as queries from '../../graphql/queries';
 import * as mutations from '../../graphql/mutations';
 import * as subscriptions from '../../graphql/subscriptions';
 
+function copyNote({id, title, content}) {
+  return {id, title, content}
+}
+
 class Note extends Component {
   constructor(props) {
     super(props)
@@ -18,22 +22,26 @@ class Note extends Component {
     }
   }
 
+  componentDidMount() {
+    const input = { id: this.state.note.id }
+    API.graphql(graphqlOperation(subscriptions.onNoteUpdated, input))
+      .subscribe({ next: data => this.setState({
+        note: copyNote(data.value.data.onNoteUpdated)
+      })})
+  }
+
   showEditModal = () => this.setState({showEditModal: true })
   closeModal = () => this.setState({showEditModal: false})
 
   updateNote = note => {
     API.graphql(graphqlOperation(mutations.updateNote, {input: note}))
-      .then(result => {
-        this.setState({
-          note: result.data.updateNote
-        })
-        this.closeModal()
-      }).catch(error => console.log(error))
+      .then(this.closeModal)
+      .catch(error => console.log(error))
   }
 
   deleteNote = () => {
-    console.log('in deleteNote')
-    API.graphql(graphqlOperation(mutations.deleteNote, {input: {id: this.state.note.id}}))
+    const input = { input: { id: this.state.note.id } }
+    API.graphql(graphqlOperation(mutations.deleteNote, input))
       .then(this.closeModal)
       .catch(error => console.log(error))
   }
@@ -41,10 +49,10 @@ class Note extends Component {
   render() {
     return (
       <>
-        {this.state.showEditModal &&
+        { this.state.showEditModal &&
           <EditNoteModal note={this.state.note} onClose={this.closeModal}
             updateNote={this.updateNote}
-            deleteNote={this.deleteNote}/>}
+            deleteNote={this.deleteNote}/> }
         <Card title={this.state.note.title} button={
           <CardButton onClick={this.showEditModal}>
             <MdModeEdit size={22} />
@@ -73,46 +81,30 @@ class Notes extends Component {
     }, (error) => {
       console.log(error)
     })
-    API.graphql(graphqlOperation(subscriptions.onCreateNote)).subscribe({ next: (noteData) => {
-      const note = (({id, title, content}) => ({id, title, content}))(noteData.value.data.onCreateNote)
-      this.setState({
-        notes: [
-          note,
-          ...this.state.notes
-        ]
-      })
-    }})
-    /*
-    API.graphql(graphqlOperation(subscriptions.onUpdateNote)).subscribe({ next: (noteData) => {
-      const note = (({id, title, content}) => ({id, title, content}))(noteData.value.data.onUpdateNote)
-      let notesCopy = [...this.state.notes]
-      let index = this.state.notes.findIndex(n => n.id === note.id)
-      notesCopy[index] = note
-      this.setState({
-        notes: notesCopy
-      })
-    }})
-    */
-    API.graphql(graphqlOperation(subscriptions.onDeleteNote)).subscribe({
-      next: noteData => {
+    API.graphql(graphqlOperation(subscriptions.onCreateNote))
+      .subscribe({ next: (data) => this.setState({
+          notes: [
+            copyNote(data.value.data.onCreateNote),
+            ...this.state.notes
+          ]
+      })})
+    API.graphql(graphqlOperation(subscriptions.onDeleteNote))
+      .subscribe({ next: noteData => {
         const id = noteData.value.data.onDeleteNote.id
         let notesCopy = [...this.state.notes]
         let index = notesCopy.findIndex(note => note.id === id)
         notesCopy.splice(index, 1)
         this.setState({
           notes: notesCopy
-        })
-      }
-    })
+      })}})
   }
 
   render() {
     return (
       <div className='Notes flexRow'>
-      {
-        this.state.notes &&
-        this.state.notes.map(note => <Note key={note.id} note={note} editNote={this.props.editNote}/>)
-      }
+      { this.state.notes &&
+        this.state.notes.map(note =>
+          <Note key={note.id} note={note} editNote={this.props.editNote}/>) }
       </div>
     );
   }
