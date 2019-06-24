@@ -1,0 +1,126 @@
+diff --git a/src/App.js b/src/App.js
+index 976ece4..8e15b49 100644
+--- a/src/App.js
++++ b/src/App.js
+@@ -1,46 +1,80 @@
+-import React from 'react';
++import React, { Component } from 'react';
++import { MdNoteAdd } from 'react-icons/md'
+ import logo from './logo.svg';
++import Notes from './Components/Notes/Notes';
++import EditNoteModal from './Components/Modal/EditNoteModal';
+ import './App.css';
+ 
+-import awsconfig from './aws-exports'
+-import Amplify from 'aws-amplify'
+-import { withAuthenticator } from 'aws-amplify-react'
+-
+-Amplify.configure(awsconfig);
+-
+-function App() {
+-  return (
+-    <div className="App">
+-      <header className="App-header">
+-        <img src={logo} className="App-logo" alt="logo" />
+-        <p>
+-          Edit <code>src/App.js</code> and save to reload.
+-        </p>
+-        <a
+-          className="App-link"
+-          href="https://reactjs.org"
+-          target="_blank"
+-          rel="noopener noreferrer"
+-        >
+-          Learn React
+-        </a>
+-      </header>
+-    </div>
+-  );
+-}
++import Amplify, { graphqlOperation }  from "aws-amplify";
++import { Connect, withAuthenticator } from "aws-amplify-react";
++
++import * as queries from './graphql/queries';
++import * as subscriptions from './graphql/subscriptions';
++
++Amplify.configure('./aws-exports.js')
++
++class App extends Component {
++  constructor(props) {
++    super(props)
++    this.state = {
++      modal: null,
++      notes: notes.items
++    }
++  }
++
++  onModalClick = e => {
++    if(!e.target.closest(".Card")) {
++      this.setState({
++        modal: null
++      })
++    }
++  }
++
++  showAddNoteModal = () => {
++    this.setState({
++      modal: <EditNoteModal onClick={this.onModalClick} noteChangeCb={this.addNote} />
++    })
++  }
++
++  showEditNoteModal = noteId => {
++    this.setState({
++      modal: <EditNoteModal onClick={this.onModalClick} note={notes.getNoteById(noteId)} noteChangeCb={note => this.editNote(note)} />
++    })
++  }
++
++  addNote = note => {
++    this.setState({
++      modal: null
++    })
++    notes.addNote(note, result => this.setState({
++      notes: result
++    }))
++  }
++  
++  editNote = (note) => {
++    this.setState({
++      modal: null
++    })
++    notes.editNote(note, result => this.setState({
++      notes: result
++    }))
++  }
+ 
+-export default withAuthenticator(App, {
+-  usernameAttributes: 'email',
+-  signUpConfig: {
+-    signUpFields: [
+-      {
+-        label: 'Name',
+-        key: 'name',
+-        required: 'true',
+-        displayOrder: 1,
+-        type: 'string'
+-      },
+-    ],
+-    hiddenDefaults: [ 'phone_number' ]
++  render() {
++    return (
++      <div className="App">
++        <header className="App-header">
++          <img src={logo} className="App-logo" alt="logo" />
++          <h1 className="App-title">Welcome to React</h1>
++        </header>
++        <Notes className="flexRow" notes={this.state.notes} onEditClick={this.showEditNoteModal} />
++        <button className="App-button primary shadow" onClick={this.showAddNoteModal}>
++          <MdNoteAdd size={22} />
++        </button>
++        {this.state.modal}
++      </div>
++    );
+   }
+-});
++}
++
++export default App;

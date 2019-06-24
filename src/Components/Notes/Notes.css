@@ -1,0 +1,8 @@
+.Notes {
+  align-items: stretch;
+  padding: 5px;
+}
+.Notes:after {
+  content: "";
+  flex: 100 auto;
+}

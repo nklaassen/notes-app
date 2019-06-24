@@ -1,0 +1,28 @@
+.Modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%;
+  z-index: 1;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.Modal > .Card {
+  width: 600px;
+  max-width: 95%;
+  margin: 100px auto;
+  background-color: white;
+}
+
+.Modal .CardContent {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+button {
+  width: 200px;
+  border: none;
+  line-height: 0;
+}
+
